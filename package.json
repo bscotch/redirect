@@ -10,7 +10,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check ."
+		"lint": "prettier --check .",
+		"setup:pnpm": "corepack prepare $npm_package_packageManager --activate"
 	},
 	"devDependencies": {
 		"@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -26,5 +27,6 @@
 		"svelte-fa": "^4.0.3",
 		"typescript": "^5.7.3",
 		"vite": "^6.0.7"
-	}
+	},
+	"packageManager": "pnpm@9.9.0"
 }
