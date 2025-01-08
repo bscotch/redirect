@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<link rel="icon" sizes="any" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Redirect</title>
 		<meta
@@ -11,6 +11,8 @@
 		/>
 		<meta name="theme-color" content="#000000" />
 		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
 			@layer reset {
 				/* FROM https://www.joshwcomeau.com/css/custom-css-reset/ */
 				/* 1. Use a more-intuitive box-sizing model */
@@ -82,10 +84,178 @@
 					isolation: isolate;
 				}
 			}
+			@layer global {
+				:root {
+					--font-family: 'Ubuntu', sans-serif;
+					--font-family-mono: 'Ubuntu Mono', monospace;
+
+					--color-logo: #ffd43b;
+					--color-text: white;
+					--color-background: #0e0e0e;
+					--color-text-subtle: rgb(169, 169, 169);
+					--color-text-danger: rgb(255, 44, 101);
+					--color-link: rgb(57 156 199);
+					--color-link-hover: rgb(83 207 207);
+					--color-link-underline: var(--color-link);
+					--content-max-width: 960px;
+					--header-max-width: var(--content-max-width);
+				}
+				body {
+					background-color: var(--color-background);
+					color: var(--color-text);
+					font-family: var(--font-family);
+					margin: auto;
+					padding-inline: 1em;
+					max-width: var(--content-max-width);
+					overflow-wrap: break-word;
+					min-height: 100vh;
+				}
+
+				p {
+					font-size: 1.1rem;
+				}
+			}
+
+			@layer basic {
+				/* Some sensible defaults for easy overriding in specific components */
+				h1,
+				h2,
+				h3,
+				h4,
+				h5,
+				h6 {
+					font-weight: bold;
+				}
+
+				a {
+					color: var(--color-link);
+					text-decoration: none;
+				}
+
+				a:hover,
+				a:focus {
+					color: var(--color-link-hover);
+				}
+
+				a,
+				a:hover,
+				a:focus {
+					text-decoration: underline;
+					cursor: pointer;
+					text-decoration-color: var(--color-link-underline);
+					text-decoration-thickness: 0.1rem;
+					text-underline-offset: 0.25rem;
+				}
+
+				a:hover {
+					text-decoration-thickness: 0.2rem;
+				}
+
+				pre,
+				code {
+					font-family: var(--font-family-mono);
+				}
+
+				[role='button'] {
+					cursor: pointer;
+					user-select: none;
+				}
+
+				/* Add some default margin between common semantic flow items */
+				:where(p, img, h1, h2, h3, h4, h5, h6, ul, ol, header, table, nav, section)
+					+ :where(p, img, h1, h2, h3, h4, h5, h6, ul, ol, table, nav, section) {
+					margin-top: 0.5em;
+				}
+			}
+
+			/* UTILITY CLASSES */
+			.reset:where(ul, ol, menu) {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+
+			.reset:where(a) {
+				text-decoration: none;
+			}
+
+			:where(button) {
+				font-size: 1em;
+				font-style: bold;
+				color: var(--color, inherit);
+				text-align: center;
+				border-style: solid;
+				border-radius: 0.5em;
+				border-color: currentColor;
+				border-width: 0;
+				margin: 0;
+				padding: 0;
+				background: none;
+				user-select: none;
+				cursor: pointer;
+			}
+
+			:where(button):hover {
+				color: var(--color-highlight, var(--color-text-highlight, var(--color-link-hover)));
+			}
+
+			.select-none {
+				user-select: none;
+			}
+
+			.select-all {
+				user-select: all;
+			}
+
+			.select-this {
+				user-select: contain;
+			}
+
+			.monospace {
+				font-family: var(--font-family-mono);
+			}
+
+			.sr-only:not(:focus):not(:active) {
+				clip: rect(0 0 0 0);
+				clip-path: inset(50%);
+				height: 1px;
+				overflow: hidden;
+				position: absolute;
+				white-space: nowrap;
+				width: 1px;
+			}
+
+			.scroller {
+				overflow-y: auto;
+				--scrollbar-width: 0.4em;
+				--scrollbar-radius: calc(var(--scrollbar-width) * 0.5);
+			}
+
+			/* Scrolling */
+			.scroller::-webkit-scrollbar {
+				width: var(--scrollbar-width);
+				height: var(--scrollbar-width);
+			}
+
+			.scroller::-webkit-scrollbar-thumb {
+				/* foreground color */
+				background: var(--color-text-subtle);
+				border-radius: var(--scrollbar-radius);
+			}
+
+			.scroller::-webkit-scrollbar-track {
+				/* background color */
+				background: var(--color-background);
+				border-radius: var(--scrollbar-radius);
+			}
+
+			.warning {
+				color: var(--color-text-danger);
+			}
 		</style>
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="hover" class="scroller">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

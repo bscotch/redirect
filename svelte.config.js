@@ -10,7 +10,7 @@ const config = {
 		adapter: adapter(),
 		paths: {
 			// GitHub pages use the repo name as the base path
-			base: dev ? '' : '/stitch'
+			base: dev ? '' : '/redirect'
 		}
 	}
 };
