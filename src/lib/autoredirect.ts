@@ -1,43 +1,32 @@
 const localStorageKey = 'autoRedirects';
 
-export class RedirectAllowlist {
-	#allowed!: Set<string>;
+type AllowList = Set<string>;
 
-	constructor() {
-		this.load();
-	}
+export function canAutoRedirect(allowed: AllowList, toUrl: URL) {
+	return allowed.has(autoRedirectStorageKey(toUrl));
+}
 
-	get allowed() {
-		return [...this.#allowed].sort();
-	}
+export function removeAutoRedirect(allowed: AllowList, toUrl: URL | string) {
+	allowed.delete(typeof toUrl === 'string' ? toUrl : autoRedirectStorageKey(toUrl));
+	saveAutoRedirects(allowed);
+}
 
-	isAllowed(url: URL) {
-		return this.#allowed.has(autoRedirectStorageKey(url));
-	}
+export function addAutoRedirect(allowed: Set<string>, toUrl: URL) {
+	allowed.add(autoRedirectStorageKey(toUrl));
+	saveAutoRedirects(allowed);
+}
 
-	allow(url: URL) {
-		this.#allowed.add(autoRedirectStorageKey(url));
-		this.save();
-	}
+function saveAutoRedirects(redirects: Set<string>) {
+	localStorage.setItem(localStorageKey, JSON.stringify(Array.from(redirects)));
+}
 
-	disallow(url: URL) {
-		this.#allowed.delete(autoRedirectStorageKey(url));
-		this.save();
-	}
-
-	load() {
-		this.#allowed = new Set<string>();
-		try {
-			this.#allowed = new Set<string>(JSON.parse(localStorage.getItem(localStorageKey) || '[]'));
-		} catch (err) {
-			console.error('Failed to load auto redirects', err);
-		}
-	}
-
-	save() {
-		try {
-			localStorage.setItem(localStorageKey, JSON.stringify(Array.from(this.#allowed)));
-		} catch {}
+export function loadAutoRedirects(_constructor: typeof Set<string> = Set): Set<string> {
+	try {
+		const redirects = new _constructor(JSON.parse(localStorage.getItem(localStorageKey) || '[]'));
+		return redirects;
+	} catch (err) {
+		console.error('Failed to load auto redirects', err);
+		return new _constructor();
 	}
 }
 

@@ -4,13 +4,21 @@
 		faArrowUpRightFromSquare,
 		faCopy,
 		faLink,
-		faVial
+		faVial,
+		faX
 	} from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
-	import { autoRedirectStorageKey, RedirectAllowlist } from '../lib/autoredirect.js';
+	import { SvelteSet } from 'svelte/reactivity';
+	import {
+		addAutoRedirect,
+		autoRedirectStorageKey,
+		canAutoRedirect,
+		loadAutoRedirects,
+		removeAutoRedirect
+	} from '../lib/autoredirect.js';
 
 	let error: null | string = $state(null);
-	let redirectAllowlist = $state(new RedirectAllowlist());
+	let redirectAllowlist = $state(loadAutoRedirects(SvelteSet));
 
 	let redirectTo = $derived.by(() => {
 		const url = page.url.searchParams.get('to');
@@ -61,7 +69,7 @@
 	<section id="redirect">
 		<h2>Redirect To...</h2>
 		{#if redirectTo}
-			<p class="redirect-target">
+			<p id="redirect-target">
 				<a class="redirect" href={redirectTo.href} rel="noopener noreferrer">{redirectTo.href}</a>
 			</p>
 			<h3 class="sr-only">Actions</h3>
@@ -70,13 +78,13 @@
 					<input
 						type="checkbox"
 						id="auto-redirect"
-						checked={redirectAllowlist.isAllowed(redirectTo)}
+						checked={canAutoRedirect(redirectAllowlist, redirectTo)}
 						onchange={(e) => {
 							// @ts-expect-error
 							if (e.target.checked) {
-								redirectAllowlist.allow(redirectTo);
+								addAutoRedirect(redirectAllowlist, redirectTo);
 							} else {
-								redirectAllowlist.disallow(redirectTo);
+								removeAutoRedirect(redirectAllowlist, redirectTo);
 							}
 						}}
 					/>
@@ -93,6 +101,29 @@
 			</ul>
 		{:else}
 			<p><i>No redirect provided. Create a new one!</i></p>
+		{/if}
+
+		{#if redirectAllowlist.size > 0}
+			<section class="allowlist">
+				<h3>Allowed Auto-redirects</h3>
+				<ul class="reset allowlist">
+					{#each [...redirectAllowlist] as hostKey}
+						<li>
+							<span>
+								{hostKey}
+							</span>
+							<button
+								class="reset"
+								onclick={() => {
+									removeAutoRedirect(redirectAllowlist, hostKey);
+								}}
+							>
+								<Fa icon={faX} title="Remove from allowlist" size="xs" />
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</section>
 		{/if}
 	</section>
 
@@ -159,6 +190,9 @@
 </section>
 
 <style>
+	a {
+		overflow-wrap: anywhere;
+	}
 	section {
 		display: flex;
 		flex-direction: column;
@@ -181,6 +215,7 @@
 	}
 	#redirect {
 		& a.redirect {
+			font-size: 1.2rem;
 			font-family: var(--font-family-mono);
 		}
 		& form {
@@ -193,6 +228,30 @@
 	#new-redirect h2 {
 		font-size: 1.2rem;
 	}
+	section.allowlist {
+		color: var(--color-text-subtle);
+		& ul {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			align-items: center;
+			font-family: var(--font-family-mono);
+		}
+
+		& li {
+			display: flex;
+			gap: 0.25rem;
+			align-items: center;
+			color: var(--color-text-warning);
+			border-bottom: 1px solid currentColor;
+
+			& button {
+				color: var(--color-text-danger);
+			}
+		}
+	}
+
 	h3 {
 		display: flex;
 		gap: 0.5rem;
@@ -212,6 +271,13 @@
 			font-family: var(--font-family-mono);
 			overflow-wrap: anywhere;
 		}
+	}
+
+	label {
+		user-select: none;
+	}
+	label:has(input[type='checkbox']) {
+		cursor: pointer;
 	}
 
 	button.copy {
