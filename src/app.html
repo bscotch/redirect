@@ -93,11 +93,12 @@
 					--color-text: white;
 					--color-background: #0e0e0e;
 					--color-text-subtle: rgb(169, 169, 169);
+					--color-text-warning: rgb(255 146 44);
 					--color-text-danger: rgb(255, 44, 101);
 					--color-link: rgb(57 156 199);
 					--color-link-hover: rgb(83 207 207);
 					--color-link-underline: var(--color-link);
-					--content-max-width: 960px;
+					--content-max-width: 720px;
 					--header-max-width: var(--content-max-width);
 				}
 				body {
@@ -113,6 +114,8 @@
 
 				p {
 					font-size: 1.1rem;
+					margin: 0;
+					padding: 0;
 				}
 			}
 
@@ -142,7 +145,7 @@
 				a:focus {
 					text-decoration: underline;
 					cursor: pointer;
-					text-decoration-color: var(--color-link-underline);
+					text-decoration-color: currentColor;
 					text-decoration-thickness: 0.1rem;
 					text-underline-offset: 0.25rem;
 				}
@@ -161,10 +164,11 @@
 					user-select: none;
 				}
 
-				/* Add some default margin between common semantic flow items */
-				:where(p, img, h1, h2, h3, h4, h5, h6, ul, ol, header, table, nav, section)
-					+ :where(p, img, h1, h2, h3, h4, h5, h6, ul, ol, table, nav, section) {
-					margin-top: 0.5em;
+				input {
+					color-scheme: dark;
+				}
+				input:where([type='text'], [type='email'], [type='url'], [type='tel'], [type='password']) {
+					padding-inline: 0.5em;
 				}
 			}
 
@@ -250,7 +254,15 @@
 			}
 
 			.warning {
+				color: var(--color-text-warning);
+			}
+
+			.error,
+			.danger {
 				color: var(--color-text-danger);
+				& a {
+					color: var(--color-text-warning);
+				}
 			}
 		</style>
 		%sveltekit.head%
