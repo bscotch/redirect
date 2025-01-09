@@ -1,9 +1,13 @@
+<script lang="ts">
+	import { internalUrl } from './internalUrls.svelte.js';
+</script>
+
 <footer>
 	<nav class="links">
 		<ul class="reset">
-			<li><a href="/about">ℹ️ About</a></li>
-			<li><a href="/privacy">🔒 Privacy Policy</a></li>
-			<li><a href="/terms">📖 Terms of Service</a></li>
+			<li><a href={internalUrl('/about')}>ℹ️ About</a></li>
+			<li><a href={internalUrl('/privacy')}>🔒 Privacy Policy</a></li>
+			<li><a href={internalUrl('/terms')}>📖 Terms of Service</a></li>
 		</ul>
 	</nav>
 	<p>
@@ -15,7 +19,7 @@
 		🚀 Created by <a href="https://www.bscotch.net/">Butterscotch Shenanigans</a>
 	</p>
 	<ul class="reset">
-		<li><a href="https://github.com/bscotch/stitch/issues">🐛 Issues</a></li>
+		<li><a href="https://github.com/bscotch/redirect/issues">🐛 Issues</a></li>
 		<li>
 			<a href="https://github.com/bscotch/redirect"> 🖥️ Source </a>
 		</li>
