@@ -3,6 +3,8 @@ const localStorageKey = 'autoRedirects';
 type AllowList = Set<string>;
 
 export function canAutoRedirect(allowed: AllowList, toUrl: URL) {
+	// Never allow redirects on this very page!
+	if (location.href === toUrl.href) return false;
 	return allowed.has(autoRedirectStorageKey(toUrl));
 }
 
