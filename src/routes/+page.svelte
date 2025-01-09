@@ -3,6 +3,7 @@
 	import {
 		faArrowUpRightFromSquare,
 		faCopy,
+		faInfoCircle,
 		faLink,
 		faVial,
 		faX
@@ -19,7 +20,6 @@
 
 	let error: null | string = $state(null);
 	let redirectAllowlist = $state(loadAutoRedirects(SvelteSet));
-
 	let redirectTo = $derived.by(() => {
 		const url = page.url.searchParams.get('to');
 		try {
@@ -28,6 +28,11 @@
 			error = 'Could not parse URL';
 		}
 	});
+
+	// svelte-ignore state_referenced_locally
+	if (redirectTo && canAutoRedirect(redirectAllowlist, redirectTo)) {
+		redirect(redirectTo);
+	}
 
 	let newRedirectInput: string = $state('');
 	let linkText: string = $state('');
@@ -46,7 +51,17 @@
 			return null;
 		}
 	});
+
+	function redirect(url: URL) {
+		window.location.href = url.href;
+	}
 </script>
+
+<svelte:head>
+	{#if redirectTo}
+		<title>Redirect to {redirectTo.href}</title>
+	{/if}
+</svelte:head>
 
 {#snippet copy(type: string, text: string)}
 	<button
@@ -106,6 +121,12 @@
 		{#if redirectAllowlist.size > 0}
 			<section class="allowlist">
 				<h3>Allowed Auto-redirects</h3>
+				{#if [...redirectAllowlist].find((i) => !i.match(/^https?:\/\//))}
+					<p>
+						<Fa icon={faInfoCircle} size="xs" />
+						<i>Non-HTTP URIs will only redirect if they have a registered handler.</i>
+					</p>
+				{/if}
 				<ul class="reset allowlist">
 					{#each [...redirectAllowlist] as hostKey}
 						<li>
@@ -230,6 +251,9 @@
 	}
 	section.allowlist {
 		color: var(--color-text-subtle);
+		& p :global(svg) {
+			display: inline-block;
+		}
 		& ul {
 			display: flex;
 			flex-direction: row;
