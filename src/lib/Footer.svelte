@@ -10,9 +10,8 @@
 		</ul>
 	</nav>
 	<p>
-		💖 Support this project by <a
-			href="https://store.steampowered.com/app/1401730?utm_source=stitch-site&utm_term=tools&utm_content=support-cta"
-			>wishlisting Crashlands 2</a
+		💖 Support this project by getting <a href="https://www.bscotch.net/games/crashlands-2"
+			>our games</a
 		>
 	</p>
 	<p>

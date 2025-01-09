@@ -4,7 +4,6 @@
 		faArrowUpRightFromSquare,
 		faCopy,
 		faInfoCircle,
-		faLink,
 		faVial,
 		faX
 	} from '@fortawesome/free-solid-svg-icons';
@@ -34,7 +33,8 @@
 		redirect(redirectTo);
 	}
 
-	let newRedirectInput: string = $state('');
+	// svelte-ignore state_referenced_locally
+	let newRedirectInput: string = $state(redirectTo ? redirectTo.href : '');
 	let linkText: string = $state('');
 	let newRedirectUrl: null | URL = $derived.by(() => {
 		try {
@@ -106,16 +106,8 @@
 					Auto-redirect links from <code>{autoRedirectStorageKey(redirectTo)}</code>
 				</label>
 			</form>
-			<ul>
-				<li>
-					<a href={redirectTo.href} rel="noopener noreferrer">
-						<Fa icon={faLink} /> Visit URI
-					</a>
-				</li>
-				<li>{@render copy('plaintext', redirectTo.href)}</li>
-			</ul>
 		{:else}
-			<p><i>No redirect provided. Create a new one!</i></p>
+			<p class="info"><i>No redirect provided. Create a new one!</i></p>
 		{/if}
 
 		{#if redirectAllowlist.size > 0}
@@ -150,6 +142,16 @@
 
 	<section id="new-redirect">
 		<h2>Create a Redirect URL</h2>
+		{#if newRedirectUrl?.href === window.location.href}
+			<p class="info">
+				<i>
+					You can create a redirect link to any URL. We've started with your current target as an
+					example!
+				</i>
+			</p>
+		{/if}
+
+		<p></p>
 		<form id="new-url-form">
 			<div class="inputs">
 				<label for="to"> Destination </label>
@@ -173,7 +175,7 @@
 		</form>
 
 		<h3>
-			Result
+			Results
 			{#if newRedirectUrl}
 				<a href={newRedirectUrl.href} rel="noopener noreferrer">
 					<Fa icon={faVial} size="xs" title="Open redirect URL here" />
@@ -214,6 +216,9 @@
 	a {
 		overflow-wrap: anywhere;
 	}
+	p :global(svg) {
+		display: inline-block;
+	}
 	section {
 		display: flex;
 		flex-direction: column;
@@ -251,9 +256,7 @@
 	}
 	section.allowlist {
 		color: var(--color-text-subtle);
-		& p :global(svg) {
-			display: inline-block;
-		}
+
 		& ul {
 			display: flex;
 			flex-direction: row;
