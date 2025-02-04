@@ -16,6 +16,7 @@
 		loadAutoRedirects,
 		removeAutoRedirect
 	} from '../lib/autoredirect.js';
+	import QrCode from '../lib/QrCode.svelte';
 
 	let error: null | string = $state(null);
 	let redirectAllowlist = $state(loadAutoRedirects(SvelteSet));
@@ -84,28 +85,37 @@
 	<section id="redirect">
 		<h2>Redirect To...</h2>
 		{#if redirectTo}
-			<p id="redirect-target">
-				<a class="redirect" href={redirectTo.href} rel="noopener noreferrer">{redirectTo.href}</a>
-			</p>
-			<h3 class="sr-only">Actions</h3>
-			<form>
-				<label>
-					<input
-						type="checkbox"
-						id="auto-redirect"
-						checked={canAutoRedirect(redirectAllowlist, redirectTo)}
-						onchange={(e) => {
-							// @ts-expect-error
-							if (e.target.checked) {
-								addAutoRedirect(redirectAllowlist, redirectTo);
-							} else {
-								removeAutoRedirect(redirectAllowlist, redirectTo);
-							}
-						}}
-					/>
-					Auto-redirect links from <code>{autoRedirectStorageKey(redirectTo)}</code>
-				</label>
-			</form>
+			<div class="redirect-with-qr">
+				<div class="qr">
+					<QrCode url={redirectTo.href} width="80px" />
+				</div>
+				<div class="redirect-container">
+					<p id="redirect-target">
+						<a class="redirect" href={redirectTo.href} rel="noopener noreferrer"
+							>{redirectTo.href}</a
+						>
+					</p>
+					<h3 class="sr-only">Actions</h3>
+					<form>
+						<label>
+							<input
+								type="checkbox"
+								id="auto-redirect"
+								checked={canAutoRedirect(redirectAllowlist, redirectTo)}
+								onchange={(e) => {
+									// @ts-expect-error
+									if (e.target.checked) {
+										addAutoRedirect(redirectAllowlist, redirectTo);
+									} else {
+										removeAutoRedirect(redirectAllowlist, redirectTo);
+									}
+								}}
+							/>
+							Auto-redirect links from <code>{autoRedirectStorageKey(redirectTo)}</code>
+						</label>
+					</form>
+				</div>
+			</div>
 		{:else}
 			<p class="info"><i>No redirect provided. Create a new one!</i></p>
 		{/if}
@@ -219,6 +229,18 @@
 	p :global(svg) {
 		display: inline-block;
 	}
+	.redirect-with-qr {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: start;
+	}
+	@media screen and (max-width: 600px) {
+		.redirect-with-qr > .qr {
+			display: none;
+		}
+	}
 	section {
 		display: flex;
 		flex-direction: column;
@@ -256,6 +278,7 @@
 	}
 	section.allowlist {
 		color: var(--color-text-subtle);
+		margin-top: 10px;
 
 		& ul {
 			display: flex;
